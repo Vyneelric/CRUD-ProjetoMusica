@@ -11,20 +11,20 @@ const message = require('../../modulo/config.js')
 
 
 //Import do DAO para realizar o CRUD no Banco de dados
-const aristaDAO = require('../../model/DAO/artista.js')
+const usuarioDAO = require('../../model/DAO/usuario.js')
 
 //Função para inserir uma nova música
-const inserirArtista = async function(artista, contentType){
+const inserirArtista = async function(usuario, contentType){
     try {
 
         if(String(contentType).toLowerCase() == 'application/json')
         {
-            if( artista.nome            == ''        || artista.nome == null            || artista.nome == undefined            || artista.nome.length > 100            ||
-                artista.nome_completo   == ''        || artista.nome_completo == null   || artista.nome_completo == undefined   || artista.nome_completo.length > 150   ||
-                artista.biografia       == undefined ||
-                artista.foto_perfil     == undefined ||
-                artista.senha           == ''        || artista.senha == null           || artista.senha == undefined           || artista.senha.length > 100           ||
-                artista.email           == ''        || artista.email == null           || artista.email == undefined           || artista.email.length > 150
+            if( usuario.nome_usuario    == ''        || usuario.nome_usuario == null   || usuario.nome_usuario == undefined   || usuario.nome_usuario.length > 150   ||
+                usuario.email           == ''        || usuario.email == null           || usuario.email == undefined           || usuario.email.length > 150 ||
+                usuario.senha           == ''        || usuario.senha == null           || usuario.senha == undefined           || usuario.senha.length > 100           ||
+                usuario.data_criacao    == ''        || usuario.data_criacao == null           || usuario.data_criacao == undefined           || usuario.data_criacao.length > 150           ||
+                usuario.foto_perfil     == ''        || usuario.foto_perfil == null           || usuario.foto_perfil == undefined           || usuario.foto_perfil.length > 150 ||
+                usuario.id_assinatura   == ''        || usuario.id_assinatura == undefined                 || usuario.id_assinatura             == null                || isNaN(id_assinatura)
             
             
             )
@@ -52,15 +52,15 @@ const inserirArtista = async function(artista, contentType){
 }
 
 //Função para atulizar uma música existente
-const atualizarArtista = async function(id, artista, contentType){
+const atualizarArtista = async function(id, usuario, contentType){
 try {
     if(String(contentType).toLowerCase() == 'application/json'){
-        if( artista.nome            == ''        || artista.nome == null            || artista.nome == undefined            || artista.nome.length > 100            ||
-            artista.nome_completo   == ''        || artista.nome_completo == null   || artista.nome_completo == undefined   || artista.nome_completo.length > 150   ||
-            artista.biografia       == undefined ||
-            artista.foto_perfil     == undefined ||
-            artista.senha           == ''        || artista.senha == null           || artista.senha == undefined           || artista.senha.length > 100           ||
-            artista.email           == ''        || artista.email == null           || artista.email == undefined           || artista.email.length > 150           ||
+        if( usuario.nome_usuario    == ''        || usuario.nome_usuario == null   || usuario.nome_usuario == undefined   || usuario.nome_usuario.length > 150   ||
+            usuario.email           == ''        || usuario.email == null           || usuario.email == undefined           || usuario.email.length > 150 ||
+            usuario.senha           == ''        || usuario.senha == null           || usuario.senha == undefined           || usuario.senha.length > 100           ||
+            usuario.data_criacao    == ''        || usuario.data_criacao == null           || usuario.data_criacao == undefined           || usuario.data_criacao.length > 150           ||
+            usuario.foto_perfil     == ''        || usuario.foto_perfil == null           || usuario.foto_perfil == undefined           || usuario.foto_perfil.length > 150 ||
+            usuario.id_assinatura   == ''        || usuario.id_assinatura == undefined                 || usuario.id_assinatura             == null                || isNaN(id_assinatura) ||
             id                      == ''        || id == undefined                 || id            == null                || isNaN(id)
             )
             {

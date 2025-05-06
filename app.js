@@ -173,6 +173,8 @@ app.put('/v1/controle-musicas/genero/:id', cors(), bodyparserJSON, async functio
 })
 
 
+
+
 //END-POINT DO ARTISTA
 
 //End-Point para inserir um novo artista
@@ -241,6 +243,9 @@ app.put('/v1/controle-musicas/artista/:id', cors(), bodyparserJSON, async functi
     response.status(resultArtista.status_code)
     response.json(resultArtista)
 })
+
+
+
 
 
 //END-POINT DA ASSINATURA
