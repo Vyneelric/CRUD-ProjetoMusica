@@ -12,7 +12,7 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
 //Função para inserir um novo genero
-const insertNovoPlaylist = async function(playlist){
+const insertNovaPlaylist = async function(playlist){
     try {
 
     let sql = `insert into tbl_playlists
@@ -123,7 +123,7 @@ const selectByIDPlaylist = async function(id){
 }
 
 module.exports = {
-    insertNovoPlaylist,
+    insertNovaPlaylist,
     updatePlaylist,
     deletePlaylist,
     selectAllPlaylist,

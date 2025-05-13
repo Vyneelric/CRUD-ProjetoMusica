@@ -15,6 +15,7 @@ const musicaDAO = require('../../model/DAO/musica.js')
 
 //Função para inserir uma nova música
 const inserirMusica = async function(musica, contentType){
+    console.log(musica)
     try {
 
         if(String(contentType).toLowerCase() == 'application/json')

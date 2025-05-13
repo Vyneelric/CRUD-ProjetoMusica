@@ -24,6 +24,8 @@ const controllerGenero = require('./controller/genero/controllerGenero.js')
 const controllerArtista = require('./controller/artistas/controllerArtistas.js')
 const controllerAssinatura = require('./controller/assinatura/controllerAssinatura.js')
 const controllerUsuario = require('./controller/usuario/controllerUsuario.js')
+const controllerAlbum = require('./controller/album/controllerAlbum.js')
+const controllerPlaylist = require('./controller/playlist/controllerPlaylist.js')
 
 //Configurações de permissões do CORS para a API
 app.use((request, response, next)=>{
@@ -387,6 +389,147 @@ app.put('/v1/controle-musicas/usuario/:id', cors(), bodyparserJSON, async functi
     response.status(result.status_code)
     response.json(result)
 })
+
+
+//END-POINT DO ALBUM
+
+//End-Point para inserir um novo usuario
+app.post('/v1/controle-musicas/album', cors(), bodyparserJSON, async function(request, response){
+    
+    //Recebe o content-type do Header da requisição!
+    let contentType = request.headers['content-type'] 
+    //Recebe os dados do Body da requisição ! 
+    let dadosBody = request.body
+
+    //Chama a função da controller para inserir os dados e aguarda o retorno da função
+    let result = await controllerAlbum.inserirAlbum(dadosBody, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//End-Point para listar todas os usuario já existentes
+app.get('/v1/controle-musicas/album', cors(), async function(request, response){
+
+    let result = await controllerAlbum.listarAlbum()
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//End-Point para selecionar o usuario pelo ID
+app.get('/v1/controle-musicas/album/:id', cors(), async function(request, response){
+    //Recebe o ID enviado pelo end-point
+    const id = request.params.id
+
+    //Chama a função
+    let result = await controllerAlbum.buscarAlbum(id)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//End-Point para excluir um usuario já existente 
+app.delete('/v1/controle-musicas/album/:id', cors(), async function(request, response){
+    //Recebe o ID enviado pelo end-point
+    const id = request.params.id
+
+    //Chama a função
+    let result = await controllerAlbum.excluirAlbum(id)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//End-Point para atualizar um usuario já existente 
+app.put('/v1/controle-musicas/album/:id', cors(), bodyparserJSON, async function(request, response){
+    
+    //Recebe o contentType da requisição
+    let contentType = request.headers['content-type']
+    
+    //Recebe o ID enviado pelo end-point
+    let id = request.params.id
+
+    //Recebe os dados do corpo da requisição
+    let dadosBody = request.body
+
+    //CHama a função
+    let result = await controllerAlbum.atualizarAlbum(id, dadosBody, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//END-POINT DA PLAYLIST
+
+//End-Point para inserir um novo usuario
+app.post('/v1/controle-musicas/playlist', cors(), bodyparserJSON, async function(request, response){
+    
+    //Recebe o content-type do Header da requisição!
+    let contentType = request.headers['content-type'] 
+    //Recebe os dados do Body da requisição ! 
+    let dadosBody = request.body
+
+    //Chama a função da controller para inserir os dados e aguarda o retorno da função
+    let result = await controllerPlaylist.inserirPlaylist(dadosBody, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//End-Point para listar todas os usuario já existentes
+app.get('/v1/controle-musicas/playlist', cors(), async function(request, response){
+
+    let result = await controllerPlaylist.listarPlaylist()
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//End-Point para selecionar o usuario pelo ID
+app.get('/v1/controle-musicas/playlist/:id', cors(), async function(request, response){
+    //Recebe o ID enviado pelo end-point
+    const id = request.params.id
+
+    //Chama a função
+    let result = await controllerPlaylist.buscarPlaylist(id)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//End-Point para excluir um usuario já existente 
+app.delete('/v1/controle-musicas/playlist/:id', cors(), async function(request, response){
+    //Recebe o ID enviado pelo end-point
+    const id = request.params.id
+
+    //Chama a função
+    let result = await controllerPlaylist.excluirPlaylist(id)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//End-Point para atualizar um usuario já existente 
+app.put('/v1/controle-musicas/playlist/:id', cors(), bodyparserJSON, async function(request, response){
+    
+    //Recebe o contentType da requisição
+    let contentType = request.headers['content-type']
+    
+    //Recebe o ID enviado pelo end-point
+    let id = request.params.id
+
+    //Recebe os dados do corpo da requisição
+    let dadosBody = request.body
+
+    //CHama a função
+    let result = await controllerPlaylist.atualizarPlaylist(id, dadosBody, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+
 
 app.listen(8080, function(){
     console.log('API funcionando e aguardando requisições...')
