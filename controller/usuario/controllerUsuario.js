@@ -13,8 +13,12 @@ const message = require('../../modulo/config.js')
 //Import do DAO para realizar o CRUD no Banco de dados
 const usuarioDAO = require('../../model/DAO/usuario.js')
 
+
+//Import das controllers
+const controllerAssinatura = require('../assinatura/controllerAssinatura.js')
+
 //Função para inserir uma nova música
-const inserirArtista = async function(usuario, contentType){
+const inserirUsuario = async function(usuario, contentType){
     try {
 
         if(String(contentType).toLowerCase() == 'application/json')
@@ -24,7 +28,7 @@ const inserirArtista = async function(usuario, contentType){
                 usuario.senha           == ''        || usuario.senha == null           || usuario.senha == undefined           || usuario.senha.length > 100           ||
                 usuario.data_criacao    == ''        || usuario.data_criacao == null           || usuario.data_criacao == undefined           || usuario.data_criacao.length > 150           ||
                 usuario.foto_perfil     == ''        || usuario.foto_perfil == null           || usuario.foto_perfil == undefined           || usuario.foto_perfil.length > 150 ||
-                usuario.id_assinatura   == ''        || usuario.id_assinatura == undefined                 || usuario.id_assinatura             == null                || isNaN(id_assinatura)
+                usuario.id_assinatura   == ''        || usuario.id_assinatura == undefined   
             
             
             )
@@ -32,9 +36,9 @@ const inserirArtista = async function(usuario, contentType){
                 return message.ERROR_REQUIRE_FIELDS //Status code 400
             }else{
                 //Encaminhando os dados da música para o DAO realizar o insert no Banco de dados
-                let resultArtista = await aristaDAO.insertNovoArtista(artista)
+                let result = await usuarioDAO.insertNovoUsuario(usuario)
         
-                if (resultArtista){
+                if (result){
                     return message.SUCESS_CREATED_ITEM //201
                 } else{
                     return message.ERROR_INTERNET_SERVER_MODEL //500 que retorna caso haja erro na MODEL
@@ -52,7 +56,7 @@ const inserirArtista = async function(usuario, contentType){
 }
 
 //Função para atulizar uma música existente
-const atualizarArtista = async function(id, usuario, contentType){
+const atualizarUsuario = async function(id, usuario, contentType){
 try {
     if(String(contentType).toLowerCase() == 'application/json'){
         if( usuario.nome_usuario    == ''        || usuario.nome_usuario == null   || usuario.nome_usuario == undefined   || usuario.nome_usuario.length > 150   ||
@@ -60,22 +64,22 @@ try {
             usuario.senha           == ''        || usuario.senha == null           || usuario.senha == undefined           || usuario.senha.length > 100           ||
             usuario.data_criacao    == ''        || usuario.data_criacao == null           || usuario.data_criacao == undefined           || usuario.data_criacao.length > 150           ||
             usuario.foto_perfil     == ''        || usuario.foto_perfil == null           || usuario.foto_perfil == undefined           || usuario.foto_perfil.length > 150 ||
-            usuario.id_assinatura   == ''        || usuario.id_assinatura == undefined                 || usuario.id_assinatura             == null                || isNaN(id_assinatura) ||
+            usuario.id_assinatura   == ''        || usuario.id_assinatura == undefined                 || usuario.id_assinatura             == null                ||
             id                      == ''        || id == undefined                 || id            == null                || isNaN(id)
             )
             {
                 return message.ERROR_REQUIRE_FIELDS //Status code 400
             }else{
                 //Verifica se o ID existe no BD
-                let result = await aristaDAO.selectByIDArtista(id)
+                let result = await usuarioDAO.selectByIDUsuarios(id)
 
                 if(result != false || typeof(result) == 'object'){
                     if(result.length > 0){
                     //Update
                     
                     //Adiciona o atributo do ID no JSON com os dados recebidos no corpo da requisição
-                    artista.id = id
-                    let resultArtista = await aristaDAO.updateArtista(artista)
+                    usuario.id = id
+                    let resultArtista = await usuarioDAO.updateUsuario(usuario)
                     
                     if(resultArtista){
                         return message.SUCESS_UPDATED_ITEM //200
@@ -97,7 +101,7 @@ try {
 
 
 //Função para excluir um artista existente.
-const excluirArtista = async function(id){
+const excluirUsuario = async function(id){
     try {
         if(id == '' || id == undefined || id == null || isNaN(id)){
             return message.ERROR_REQUIRE_FIELDS //400
@@ -130,23 +134,49 @@ const excluirArtista = async function(id){
 }
 
 //Função para retornar uma lista de músicas
-const listarArtista = async function(){
+const listarUsuario = async function(){
+
+    let arrayUsuarios = []
+
 
     //Objeto JSON
-    let dadosArtistas = {}
+    let dadosUsuario = {}
 
     try {
-        let resultArtista = await aristaDAO.selectAllArtistas()
+        let result = await usuarioDAO.selectAllUsuarios()
 
-        if(resultArtista != false || typeof(resultArtista) == 'object'){
-            if(resultArtista.length > 0){
+        if(result != false || typeof(result) == 'object'){
+            if(result.length > 0){
                 //Cria um JSON para colocar o array de músicas
-                dadosArtistas.status = true,
-                dadosArtistas.status_code = 200,
-                dadosArtistas.items = resultArtista.length,
-                dadosArtistas.artistas = resultArtista
+                dadosUsuario.status = true,
+                dadosUsuario.status_code = 200,
+                dadosUsuario.items = result.length
 
-                return dadosArtistas
+
+                //Percorrer o array de filmes para pegar cada ID de classificação
+                // e descobrir quais os dados da classificação
+                
+                // resultFilme.forEach( async function(itemFilme){
+                //Precisamos utilizar o for of, pois o foreach não consegue trabalhar com 
+                // requisições async com await
+                for(const itemUsuarios of result){
+                    /* Monta o objeto da classificação para retornar no Filme (1XN) */
+                        //Busca os dados da classificação na controller de classificacao
+                        let dadosAssinatura = await controllerAssinatura.buscarAssinatura(itemUsuarios.id_assinatura)
+
+                        //Adiciona um atributo classificação no JSON de filmes e coloca os dados da classificação
+                        itemUsuarios.assinatura = dadosAssinatura.assinaturas
+
+                        delete itemUsuarios.id_assinatura
+                    /* */
+
+                    arrayUsuarios.push(itemUsuarios)
+                }
+
+                dadosUsuario.usuarios = arrayUsuarios
+
+                return dadosUsuario
+
             }else{
                 return message.ERROR_NOT_FOUND //404
             }
@@ -160,24 +190,49 @@ const listarArtista = async function(){
 }
 
 //Função para retornar um Artista pelo seu ID
-const buscarArtista = async function (id){
+const buscarUsuario = async function (id){
     try {
+
+        let arrayUsuarios = []
+
         if(id == '' || id == undefined || id == null || isNaN(id)){
             return message.ERROR_REQUIRE_FIELDS //400
         }else{
 
         //Objeto JSON
-        let dadosArtistas = {}
-        let resultArtista = await aristaDAO.selectByIDArtista(id)
+        let dadosUsuario = {}
+        let result = await usuarioDAO.selectByIDUsuarios(id)
 
-        if(resultArtista != false || typeof(resultArtista) == 'object'){
-            if(resultArtista.length > 0){
+        if(result != false || typeof(result) == 'object'){
+            if(result.length > 0){
                 //Cria um JSON para colocar o array de músicas
-                dadosArtistas.status = true,
-                dadosArtistas.status_code = 200,
-                dadosArtistas.artistas = resultArtista
+                dadosUsuario.status = true,
+                dadosUsuario.status_code = 200
+                // dadosUsuario.usuarios = result
 
-                return dadosArtistas
+
+                //Percorrer o array de filmes para pegar cada ID de classificação
+                // e descobrir quais os dados da classificação
+                
+                // resultFilme.forEach( async function(itemFilme){
+                //Precisamos utilizar o for of, pois o foreach não consegue trabalhar com 
+                // requisições async com await
+                for(const itemUsuarios of result){
+                    /* Monta o objeto da classificação para retornar no Filme (1XN) */
+                        //Busca os dados da classificação na controller de classificacao
+                        let dadosAssinatura = await controllerAssinatura.buscarAssinatura(itemUsuarios.id_assinatura)
+                        //Adiciona um atributo classificação no JSON de filmes e coloca os dados da classificação
+                        itemUsuarios.assinatura = dadosAssinatura.assinaturas
+                        //Remover um atributo do JSON
+                        delete itemUsuarios.id_assinatura
+                    /* */
+
+                    arrayUsuarios.push(itemUsuarios)
+                }
+
+                dadosUsuario.usuario = arrayUsuarios
+
+                return dadosUsuario //200
             }else{
                 return message.ERROR_NOT_FOUND //404
             }
@@ -194,9 +249,9 @@ const buscarArtista = async function (id){
 
 
 module.exports = {
-    inserirArtista,
-    atualizarArtista,
-    excluirArtista,
-    listarArtista,
-    buscarArtista
+    inserirUsuario,
+    atualizarUsuario,
+    excluirUsuario,
+    listarUsuario,
+    buscarUsuario
 }
