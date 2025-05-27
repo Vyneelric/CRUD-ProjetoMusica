@@ -25,12 +25,39 @@ create table tbl_genero (
 	nome 	varchar(100) not null
 );
 
+CREATE TABLE tbl_musica_genero (
+  id_musica_genero INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  id_musica INT NOT NULL,
+  id_genero INT NOT NULL,
+
+  CONSTRAINT fk_musica_genero_musica
+    FOREIGN KEY (id_musica) REFERENCES tbl_musica(id),
+
+  CONSTRAINT fk_musica_genero_genero
+    FOREIGN KEY (id_genero) REFERENCES tbl_genero(id)
+);
+
+CREATE TABLE tbl_musica_playlist (
+  id_musica_playlist INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  id_musica INT NOT NULL,
+  id_playlist INT NOT NULL,
+
+  CONSTRAINT fk_musica_playlist_musica
+    FOREIGN KEY (id_musica) REFERENCES tbl_musica(id),
+
+  CONSTRAINT fk_musica_playlist_playlist
+    FOREIGN KEY (id_playlist) REFERENCES tbl_playlist(id)
+);
+
+
 create table tbl_assinatura (
 	id 			int not null primary key auto_increment,
 	tipo_plano 	varchar(100) not null,
 	data_inicio date, 
 	data_fim 	date 
 );
+
+drop table tbl_assinatura;
 
 create table tbl_usuarios (
 	id      int not null primary key auto_increment,
@@ -46,7 +73,10 @@ create table tbl_usuarios (
     references tbl_assinatura(id) 		#Especifica a origem da Chave, de qual tabela virá a PK
 );
 
-create table tbl_playlists (
+drop table tbl_usuarios;
+
+
+create table tbl_playlist (
 	id  int not null primary key auto_increment,
 	titulo        varchar(45) not null,
 	imagem_capa   text not null,
@@ -56,6 +86,7 @@ create table tbl_playlists (
 	foreign key (id_usuario) 
     references tbl_usuarios(id)
 );
+
 
 create table tbl_albuns (
 	id         int not null primary key auto_increment,
@@ -69,6 +100,43 @@ create table tbl_albuns (
     references tbl_artista(id)
 );
 
+CREATE TABLE tbl_artistas_generos (
+  id_artista_genero INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  id_artista INT NOT NULL,
+  id_genero INT NOT NULL,
+
+  CONSTRAINT fk_artistas_generos_genero
+    FOREIGN KEY (id_genero) REFERENCES tbl_genero(id),
+
+  CONSTRAINT fk_artistas_generos_artista
+    FOREIGN KEY (id_artista) REFERENCES tbl_artista(id)
+);
+
+
+CREATE TABLE tbl_tipo_email (
+  id_tipo_email INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(20) NULL,
+  id_artista INT NOT NULL,
+  id_usuario INT NOT NULL,
+
+  CONSTRAINT fk_tipo_email_artista
+    FOREIGN KEY (id_artista) REFERENCES tbl_artista(id),
+
+  CONSTRAINT fk_tipo_email_usuario
+    FOREIGN KEY (id_usuario) REFERENCES tbl_usuarios(id)
+);
+
+CREATE TABLE tbl_curtidas (
+  id_curtida INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  id_usuario INT NOT NULL,
+  id_musica INT NOT NULL,
+
+  CONSTRAINT fk_curtidas_usuario
+    FOREIGN KEY (id_usuario) REFERENCES tbl_usuarios(id),
+
+  CONSTRAINT fk_curtidas_musica
+    FOREIGN KEY (id_musica) REFERENCES tbl_musica(id)
+);
 
 
 #Mostrar tabelas

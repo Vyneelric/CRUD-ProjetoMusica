@@ -12,10 +12,12 @@ const message = require('../../modulo/config.js')
 
 //Import do DAO para realizar o CRUD no Banco de dados
 const playlistDAO = require('../../model/DAO/playlist.js')
+const musicaPlaylistDAO = require ('../../model/DAO/musica_playlist.js')
 
 
 //Import das controllers
 const controllerUsuario = require('../usuario/controllerUsuario.js')
+const controllerMusicaPlaylist = require('../../controller/musica/controllerMusicaPlaylist.js')
 
 //Função para inserir uma nova música
 const inserirPlaylist = async function(playlist, contentType){
@@ -30,10 +32,26 @@ const inserirPlaylist = async function(playlist, contentType){
             {
                 return message.ERROR_REQUIRE_FIELDS //Status code 400
             }else{
-                //Encaminhando os dados da música para o DAO realizar o insert no Banco de dados
-                let result = await playlistDAO.insertNovaPlaylist(playlist)
-        
-                if (result){
+
+
+            let result = await playlistDAO.insertNovaPlaylist(playlist)
+
+            if (result) {
+                    if (playlist.musicas && Array.isArray(playlist.musicas)) {
+                        // Obtém o ID do playlist inserido
+                        let playlistInserida = await playlistDAO.selectLastInsertId()
+                        let idPlaylist = playlistInserida[0].id;
+                        
+                        for (let musicas of playlist.musicas) {
+                            if (musicas.id && !isNaN(musicas.id)) {
+                                let musicaPlaylist = {
+                                    id_musica: musicas.id,
+                                    id_playlist: idPlaylist 
+                                }
+                                await musicaPlaylistDAO.insertMusicaPlaylist(musicaPlaylist);
+                            }
+                        }
+                    }
                     return message.SUCESS_CREATED_ITEM //201
                 } else{
                     return message.ERROR_INTERNET_SERVER_MODEL //500 que retorna caso haja erro na MODEL
@@ -46,7 +64,6 @@ const inserirPlaylist = async function(playlist, contentType){
     } catch (error) {
         return message.ERROR_INTERNET_SERVER_CONTROLLER //500 que retorna caso haja erro CONTROLLER
     }
-
 
 }
 
@@ -160,6 +177,11 @@ const listarPlaylist = async function(){
 
                         delete itemPlaylist.id_usuario
                     /* */
+
+                    /* RELACIONAMENTO DE MUSICAPLAYLIST (NXN) */
+                    let dadosMusicas = await controllerMusicaPlaylist.buscarMusicaPorPlaylist(itemPlaylist.id)
+
+                    itemPlaylist.musicas = dadosMusicas.musicas
 
                     arrayPlaylist.push(itemPlaylist)
                 }

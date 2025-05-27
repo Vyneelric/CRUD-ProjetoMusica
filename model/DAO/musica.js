@@ -129,8 +129,20 @@ const selectByIDMusica = async function(id){
         } catch(error){
             return false //Bug de programação.
         }
+}
 
-
+const selectLastInsertId = async function() {
+    try {
+        let sql = 'select id from tbl_musica order by id desc limit 1';
+        
+        let result = await prisma.$queryRawUnsafe(sql);
+        if (result)
+            return result;
+        else
+            return false;
+    } catch (error) {
+        return false;
+    }
 }
 
 module.exports = {
@@ -138,5 +150,6 @@ module.exports = {
     updateMusica,
     deleteMusica,
     selectAllMusica,
-    selectByIDMusica
+    selectByIDMusica,
+    selectLastInsertId
 }

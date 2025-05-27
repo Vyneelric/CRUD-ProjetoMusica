@@ -12,6 +12,11 @@ const message = require('../../modulo/config.js')
 
 //Import do DAO para realizar o CRUD no Banco de dados
 const aristaDAO = require('../../model/DAO/artista.js')
+const artistaGeneroDAO = require('../../model/DAO/artista_genero.js')
+
+
+//Import das controllers do projeto
+const controllerArtistaGenero = require('../../controller/artistas/controllerArtistaGenero.js')
 
 //Função para inserir uma nova música
 const inserirArtista = async function(artista, contentType){
@@ -33,8 +38,24 @@ const inserirArtista = async function(artista, contentType){
             }else{
                 //Encaminhando os dados da música para o DAO realizar o insert no Banco de dados
                 let resultArtista = await aristaDAO.insertNovoArtista(artista)
-        
-                if (resultArtista){
+                if (resultArtista) {
+                // Se houver gêneros para associar
+                    if (artista.genero && Array.isArray(artista.genero)) {
+                        // Obtém o ID do artista inserido
+                        let artistaInserido = await aristaDAO.selectLastInsertId();
+                        let idArtista = artistaInserido[0].id;
+                        
+                        // Para cada gênero no array, cria a relação
+                        for (let genero of artista.genero) {
+                            if (genero.id && !isNaN(genero.id)) {
+                                let artistaGenero = {
+                                    id_artista: idArtista,
+                                    id_genero: genero.id
+                                }
+                                await artistaGeneroDAO.insertArtistaGenero(artistaGenero);
+                            }
+                        }
+                    }
                     return message.SUCESS_CREATED_ITEM //201
                 } else{
                     return message.ERROR_INTERNET_SERVER_MODEL //500 que retorna caso haja erro na MODEL
@@ -45,7 +66,7 @@ const inserirArtista = async function(artista, contentType){
             return message.ERROR_CONTENT_TYPE //415 que retorna o erro do tipo de conteúdo do header
         }    
     } catch (error) {
-        return message.ERROR_INTERNET_SERVER_CONTROLLER //500 que retorna caso haja erro CONTROLLER
+        return message.ERROR_INTERNET_SERVER_CONTROLLER;
     }
 
 
@@ -132,6 +153,8 @@ const excluirArtista = async function(id){
 //Função para retornar uma lista de músicas
 const listarArtista = async function(){
 
+    let arrayArtistas = []
+
     //Objeto JSON
     let dadosArtistas = {}
 
@@ -143,8 +166,21 @@ const listarArtista = async function(){
                 //Cria um JSON para colocar o array de músicas
                 dadosArtistas.status = true,
                 dadosArtistas.status_code = 200,
-                dadosArtistas.items = resultArtista.length,
-                dadosArtistas.artistas = resultArtista
+                dadosArtistas.items = resultArtista.length
+                
+                for(const itemArtista of resultArtista){
+                    //Busca os dados da classificação na controller de classificacao
+                    let dadosGenero = await controllerArtistaGenero.buscarGeneroPorArtista(itemArtista.id)
+                    
+                    //Adiciona um atributo classificação no JSON de filmes e coloca os dados da classificação
+                    itemArtista.generos = dadosGenero.generos
+
+                    //Adiciona em um novo array o JSON de filmes com a sua nova estrutura de dados
+                    arrayArtistas.push(itemArtista)
+ 
+                }
+                
+                dadosArtistas.artista = arrayArtistas
 
                 return dadosArtistas
             }else{
@@ -155,6 +191,7 @@ const listarArtista = async function(){
         }
 
     } catch (error) {
+                    console.error('Erro no selectGeneroByIdArtista:', error);
         return message.ERROR_INTERNET_SERVER_CONTROLLER //500
     }
 }

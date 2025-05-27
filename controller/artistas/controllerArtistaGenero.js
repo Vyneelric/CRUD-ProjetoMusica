@@ -9,22 +9,22 @@
 const message = require('../../modulo/config.js')
 
 //Import do aquivo para realizar o CRUD de dados no Banco de Dados
-const musicaGeneroDAO = require('../../model/DAO/musica_genero.js')
+const artistaGeneroDAO = require('../../model/DAO/artista_genero.js')
 
 //Função para tratar a inserção de um novo genero no DAO
-const inserirMusicaGenero = async function(musicaGenero, contentType){
+const inserirArtistaGenero = async function(artistaGenero, contentType){
     try {
         if(String(contentType).toLowerCase() == 'application/json')
         {
                 if (
-                    musicaGenero.id_musica              == ''           || musicaGenero.id_musica     == undefined    || musicaGenero.id_musica  == null || isNaN(musicaGenero.id_musica)  || musicaGenero.id_musica <=0 ||
-                    musicaGenero.id_genero             == ''           || musicaGenero.id_genero    == undefined    || musicaGenero.id_genero == null || isNaN(musicaGenero.id_genero) || musicaGenero.id_genero<=0
+                    artistaGenero.id_artista              == ''           || artistaGenero.id_artista     == undefined    || artistaGenero.id_artista  == null || isNaN(artistaGenero.id_artista)  || artistaGenero.id_artista <=0 ||
+                    artistaGenero.id_genero             == ''           || artistaGenero.id_genero    == undefined    || artistaGenero.id_genero == null || isNaN(artistaGenero.id_genero) || artistaGenero.id_genero<=0
                 )
                 {
                     return message.ERROR_REQUIRED_FIELDS //400
                 }else{
                     //Chama a função para inserir no BD e aguarda o retorno da função
-                    let result = await musicaGeneroDAO.insertMusicaGenero(musicaGenero)
+                    let result = await artistaGeneroDAO.insertArtistaGenero(artistaGenero)
 
                     if(result)
                         return message.SUCCESS_CREATED_ITEM //201
@@ -40,19 +40,19 @@ const inserirMusicaGenero = async function(musicaGenero, contentType){
 }
 
 //Função para tratar a atualização de um genero no DAO
-const atualizarMusicaGenero = async function(id, musicaGenero, contentType){
+const atualizarArtistaGenero = async function(id, artistaGenero, contentType){
     try {
         if(String(contentType).toLowerCase() == 'application/json')
             {
                 if (id                                == ''           || id                       == undefined    || id                    == null || isNaN(id)  || id  <= 0   ||
-                    musicaGenero.id_musica              == ''           || musicaGenero.id_musica     == undefined    || musicaGenero.id_musica  == null || isNaN(musicaGenero.id_musica)  || musicaGenero.id_musica <=0 ||
-                    musicaGenero.id_genero             == ''           || musicaGenero.id_genero    == undefined    || musicaGenero.id_genero == null || isNaN(musicaGenero.id_genero) || musicaGenero.id_genero<=0
+                    artistaGenero.id_artista              == ''           || artistaGenero.id_artista     == undefined    || artistaGenero.id_artista  == null || isNaN(artistaGenero.id_artista)  || artistaGenero.id_artista <=0 ||
+                    artistaGenero.id_genero             == ''           || artistaGenero.id_genero    == undefined    || artistaGenero.id_genero == null || isNaN(artistaGenero.id_genero) || artistaGenero.id_genero<=0
                 )
                 {
                     return message.ERROR_REQUIRED_FIELDS //400
                 }else{
                     //Validação para verificar se o ID existe no BD
-                    let result = await musicaGeneroDAO.selectByIdMusicaGenero(parseInt(id))
+                    let result = await artistaGeneroDAO.selectByIdArtistaGenero(parseInt(id))
 
                     if(result != false || typeof(result) == 'object'){
                         if(result.length > 0 ){
@@ -60,7 +60,7 @@ const atualizarMusicaGenero = async function(id, musicaGenero, contentType){
                             //Adiciona o ID do genero no JSON com os dados
                             genero.id = parseInt(id)
 
-                            let resultGenero = await musicaGeneroDAO.updateMusicaGenero(musicaGenero)
+                            let resultGenero = await artistaGeneroDAO.updateArtistaGenero(artistaGenero)
 
                             if(resultGenero){
                                 return message.SUCCESS_UPDATED_ITEM //200
@@ -83,20 +83,20 @@ const atualizarMusicaGenero = async function(id, musicaGenero, contentType){
 }
 
 //Função para tratar a exclusão de um genero no DAO
-const excluirMusicaGenero = async function(id){
+const excluirArtistaGenero = async function(id){
     try {
         if(id == '' || id == undefined || id == null || isNaN(id) || id <=0){
             return message.ERROR_REQUIRED_FIELDS //400
         }else{
 
             //Funcção que verifica se  ID existe no BD
-            let resultgenero = await musicaGeneroDAO.selectByIdMusicaGenero(parseInt(id))
+            let resultgenero = await artistaGeneroDAO.selectByIdArtistaGenero(parseInt(id))
 
             if(resultgenero != false || typeof(resultgenero) == 'object'){
                 //Se existir, faremos o delete
                 if(resultgenero.length > 0){
                     //delete
-                    let result = await musicaGeneroDAO.deleteMusicaGenero(parseInt(id))
+                    let result = await artistaGeneroDAO.deleteArtistaGenero(parseInt(id))
 
                     if(result){
                         return message.SUCCESS_DELETED_ITEM //200
@@ -116,12 +116,12 @@ const excluirMusicaGenero = async function(id){
 }
 
 //Função para tratar o retorno de uma lista de generos do DAO
-const listarMusicaGenero = async function(){
+const listarArtistaGenero = async function(){
     try {
         //Objeto do tipo JSON
         let dadosgenero = {}
         //Chama a função para retornar os generos cadastrados
-        let resultgenero = await musicaGeneroDAO.selectAllMusicaGenero()
+        let resultgenero = await artistaGeneroDAO.selectAllArtistaGenero()
 
         if(resultgenero != false || typeof(resultgenero) == 'object'){
             if(resultgenero.length > 0){
@@ -144,14 +144,14 @@ const listarMusicaGenero = async function(){
 }
 
 //Função para tratar o retorno de um genero filtrando pelo ID do DAO
-const buscarMusicaGenero = async function(id){
+const buscarArtistaGenero = async function(id){
     try {
         if(id == '' || id == undefined || id == null || isNaN(id) || id <=0){
             return message.ERROR_REQUIRED_FIELDS //400
         }else{
             dadosgenero = {}
 
-            let resultgenero = await musicaGeneroDAO.selectByIdMusicaGenero(parseInt(id))
+            let resultgenero = await artistaGeneroDAO.selectByIdArtistaGenero(parseInt(id))
             
             if(resultgenero != false || typeof(resultgenero) == 'object'){
                 if(resultgenero.length > 0){
@@ -178,21 +178,25 @@ const buscarMusicaGenero = async function(id){
 
 
 //Função para retornar os generos pelo id da musica
-const buscarGeneroPorMusica = async function(idMusica){
+const buscarGeneroPorArtista = async function(idArtista){
 
     try {
-        if(idMusica == '' || idMusica == undefined || idMusica == null || isNaN(idMusica) || idMusica <=0){
+        if(idArtista == '' || idArtista == undefined || idArtista == null || isNaN(idArtista) || idArtista <=0){
             return message.ERROR_REQUIRED_FIELDS //400
         }else{
+            
             dadosgenero = {}
 
-            let resultgenero = await musicaGeneroDAO.selectGeneroByIdMusica(parseInt(idMusica))
+            let resultgenero = await artistaGeneroDAO.selectGeneroByIdArtista(parseInt(idArtista))
             
             if(resultgenero != false || typeof(resultgenero) == 'object'){
                 if(resultgenero.length > 0){
                      //Criando um JSON de retorno de dados para a API
+                    
                     dadosgenero.status = true
+                    
                     dadosgenero.status_code = 200
+                    
                     dadosgenero.genero = resultgenero
 
                     return dadosgenero //200
@@ -210,7 +214,7 @@ const buscarGeneroPorMusica = async function(idMusica){
 }
 
 //Função para retornar os filmes pelo id do genero
-const buscarMusicaPorGenero = async function(idGenero){
+const buscarArtistaPorGenero = async function(idGenero){
 
     try {
         if(idGenero == '' || idGenero == undefined || idGenero == null || isNaN(idGenero) || idGenero <=0){
@@ -218,7 +222,7 @@ const buscarMusicaPorGenero = async function(idGenero){
         }else{
             dadosMusica = {}
 
-            let resultMusic = await musicaGeneroDAO.selectMusicaByIdGenero(parseInt(idGenero))
+            let resultMusic = await artistaGeneroDAO.selectArtistaByIdGenero(parseInt(idGenero))
             
             if(resultMusic != false || typeof(resultMusic) == 'object'){
                 if(resultMusic.length > 0){
@@ -244,11 +248,11 @@ const buscarMusicaPorGenero = async function(idGenero){
 
 
 module.exports = {
-    inserirMusicaGenero,
-    atualizarMusicaGenero,
-    excluirMusicaGenero,
-    listarMusicaGenero,
-    buscarMusicaGenero,
-    buscarGeneroPorMusica,
-    buscarMusicaPorGenero
+    inserirArtistaGenero,
+    atualizarArtistaGenero,
+    excluirArtistaGenero,
+    listarArtistaGenero,
+    buscarArtistaGenero,
+    buscarGeneroPorArtista,
+    buscarArtistaPorGenero
 } 

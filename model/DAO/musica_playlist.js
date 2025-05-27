@@ -11,17 +11,17 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
 //Função para inserir um novo FilmeGenero
-const insertMusicaGenero = async function(musicaGenero){
+const insertMusicaPlaylist = async function(musicaPlaylist){
   try {
 
-      let sql = `insert into tbl_musica_genero  ( 
+      let sql = `insert into tbl_musica_playlist  ( 
                                           id_musica,
-                                          id_genero
+                                          id_playlist
                                         ) 
                                           values 
                                         (
-                                          '${musicaGenero.id_musica}',
-                                          '${musicaGenero.id_genero}'
+                                          '${musicaPlaylist.id_musica}',
+                                          '${musicaPlaylist.id_playlist}'
                                         )`
 
       //Executa o scriptSQL no banco de dados e aguarda o retorno do BD para 
@@ -39,12 +39,12 @@ const insertMusicaGenero = async function(musicaGenero){
 }
 
 //Função para atualizar um FilmeGenero existente
-const updateMusicaGenero = async function(musicaGenero){
+const updateMusicaPlaylist = async function(musicaPlaylist){
   try {
-      let sql = `update tbl_musica_genero set        id_musica       = ${musicaGenero.id_musica},
-                                                    id_genero      = ${musicaGenero.id_genero}
+      let sql = `update tbl_musica_playlist set        id_musica       = ${musicaPlaylist.id_musica},
+                                                    id_playlist      = ${musicaPlaylist.id_playlist}
                                         
-                            where id = ${musicaGenero.id}                
+                            where id = ${musicaPlaylist.id}                
                             `
       let result = await prisma.$executeRawUnsafe(sql)
 
@@ -58,9 +58,9 @@ const updateMusicaGenero = async function(musicaGenero){
 }
 
 //Função para excluir um FilmeGenero existente
-const deleteMusicaGenero = async function(id){
+const deleteMusicaPlaylist = async function(id){
   try {
-    let sql = `delete from tbl_musica_genero where id = ${id}`
+    let sql = `delete from tbl_musica_playlist where id = ${id}`
 
     let result = await prisma.$executeRawUnsafe(sql)
 
@@ -74,11 +74,11 @@ const deleteMusicaGenero = async function(id){
 }
 
 //Função para retornar todos os FilmeGeneros existentes
-const selectAllMusicaGenero = async function(){
+const selectAllMusicaPlaylist = async function(){
 
     try {
       //ScriptSQL para retornar todos os dados
-      let sql = 'select * from tbl_musica_genero order by id desc'
+      let sql = 'select * from tbl_musica_playlist order by id desc'
 
       //Executa o scriptSQL no BD e aguarda o retorno dos dados
       let result = await prisma.$queryRawUnsafe(sql)
@@ -94,9 +94,9 @@ const selectAllMusicaGenero = async function(){
 }
 
 //Função para buscar um FilmeGenero pelo ID
-const selectByIdMusicaGenero = async function(id){
+const selectByIdMusicaPlaylist = async function(id){
   try {
-    let sql = `select * from tbl_musica_genero where id = ${id}`
+    let sql = `select * from tbl_musica_playlist where id = ${id}`
 
     let result = await prisma.$queryRawUnsafe(sql)
 
@@ -110,14 +110,14 @@ const selectByIdMusicaGenero = async function(id){
 }
 
 //Função para retornar os filmes pelo genero
-const selectMusicaByIdGenero = async function(idGenero){
+const selectMusicaByIdPlaylist = async function(idPlaylist){
   try {
       let sql = `select tbl_musica.* from tbl_musica 
-                                            inner join tbl_musica_genero
-                                              on tbl_musica.id = tbl_musica_genero.id_musica
-                                            inner join tbl_genero
-                                              on tbl_genero.id = tbl_musica_genero.id_genero
-                  where tbl_musica_genero.id_genero = ${idGenero}`
+                                            inner join tbl_musica_playlist
+                                              on tbl_musica.id = tbl_musica_playlist.id_musica
+                                            inner join tbl_playlist
+                                              on tbl_playlist.id = tbl_musica_playlist.id_playlist
+                  where tbl_musica_playlist.id_playlist = ${idPlaylist}`
 
       let result = await prisma.$queryRawUnsafe(sql)
 
@@ -131,14 +131,14 @@ const selectMusicaByIdGenero = async function(idGenero){
 }
 
 //Função para retornar os generos pelo Filme
-const selectGeneroByIdMusica = async function(idMusica){
+const selectPlaylistByIdMusica = async function(idMusica){
  try {
-      let sql = `select tbl_genero.* from tbl_musica 
-                                            inner join tbl_musica_genero
-                                              on tbl_musica.id = tbl_musica_genero.id_musica
-                                            inner join tbl_genero
-                                              on tbl_genero.id = tbl_musica_genero.id_genero
-                  where tbl_musica_genero.id_musica = ${idMusica}`
+      let sql = `select tbl_playlist.* from tbl_musica 
+                                            inner join tbl_musica_playlist
+                                              on tbl_musica.id = tbl_musica_playlist.id_musica
+                                            inner join tbl_playlist
+                                              on tbl_playlist.id = tbl_musica_playlist.id_playlist
+                  where tbl_musica_playlist.id_musica = ${idMusica}`
                   
       let result = await prisma.$queryRawUnsafe(sql)
 
@@ -153,11 +153,11 @@ const selectGeneroByIdMusica = async function(idMusica){
 
 
 module.exports = {
-    insertMusicaGenero,
-    updateMusicaGenero,
-    deleteMusicaGenero,
-    selectAllMusicaGenero,
-    selectByIdMusicaGenero,
-    selectMusicaByIdGenero,
-    selectGeneroByIdMusica
+    insertMusicaPlaylist,
+    updateMusicaPlaylist,
+    deleteMusicaPlaylist,
+    selectAllMusicaPlaylist,
+    selectByIdMusicaPlaylist,
+    selectMusicaByIdPlaylist,
+    selectPlaylistByIdMusica
 } 

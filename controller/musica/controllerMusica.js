@@ -12,10 +12,15 @@ const message = require('../../modulo/config.js')
 
 //Import do DAO para realizar o CRUD no Banco de dados
 const musicaDAO = require('../../model/DAO/musica.js')
+const musicaGeneroDAO = require ('../../model/DAO/musica_genero.js')
+
+
+//Import controller do projeto
+const controllerMusicaGenero = require('../../controller/musica/controllerMusicaGenero.js')
+
 
 //Função para inserir uma nova música
 const inserirMusica = async function(musica, contentType){
-    console.log(musica)
     try {
 
         if(String(contentType).toLowerCase() == 'application/json')
@@ -25,16 +30,30 @@ const inserirMusica = async function(musica, contentType){
                 musica.letra           == undefined ||
                 musica.link            == undefined || musica.link.length > 200       ||
                 musica.duracao         == ''        || musica.duracao == null         || musica.duracao == undefined         || musica.duracao.length > 8
-            
-            
             )
             {
                 return message.ERROR_REQUIRE_FIELDS //Status code 400
             }else{
                 //Encaminhando os dados da música para o DAO realizar o insert no Banco de dados
                 let resultMusica = await musicaDAO.insertMusica(musica)
-        
-                if (resultMusica){
+            if (resultMusica) {
+                // Se houver gêneros para associar
+                    if (musica.generos && Array.isArray(musica.generos)) {
+                        // Obtém o ID do musica inserido
+                        let musicaInserida = await musicaDAO.selectLastInsertId();
+                        let idMusica = musicaInserida[0].id;
+                        
+                        // Para cada gênero no array, cria a relação
+                        for (let generos of musica.generos) {
+                            if (generos.id && !isNaN(generos.id)) {
+                                let musicaGenero = {
+                                    id_musica: idMusica,
+                                    id_genero: generos.id
+                                }
+                                await musicaGeneroDAO.insertMusicaGenero(musicaGenero);
+                            }
+                        }
+                    }
                     return message.SUCESS_CREATED_ITEM //201
                 } else{
                     return message.ERROR_INTERNET_SERVER_MODEL //500 que retorna caso haja erro na MODEL
@@ -130,6 +149,8 @@ const excluirMusica = async function(id_musica){
 //Função para retornar uma lista de músicas
 const listarMusica = async function(){
 
+
+    let arrayMusicas = []
     //Objeto JSON
     let dadosMusicas = {}
 
@@ -141,8 +162,26 @@ const listarMusica = async function(){
                 //Cria um JSON para colocar o array de músicas
                 dadosMusicas.status = true,
                 dadosMusicas.status_code = 200,
-                dadosMusicas.items = resultMusica.length,
-                dadosMusicas.musics = resultMusica
+                dadosMusicas.items = resultMusica.length
+
+
+                    
+                
+                for(const itemMusica of resultMusica){
+
+
+                    //Busca os dados da classificação na controller de classificacao
+                    let dadosGenero = await controllerMusicaGenero.buscarGeneroPorMusica(itemMusica.id)
+                    
+                    //Adiciona um atributo classificação no JSON de filmes e coloca os dados da classificação
+                    itemMusica.generos = dadosGenero.genero
+                    
+                    //Adiciona em um novo array o JSON de filmes com a sua nova estrutura de dados
+                    arrayMusicas.push(itemMusica)
+ 
+                }
+                
+                dadosMusicas.musicas = arrayMusicas
 
                 return dadosMusicas
             }else{
