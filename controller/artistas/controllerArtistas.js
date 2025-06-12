@@ -40,13 +40,13 @@ const inserirArtista = async function(artista, contentType){
                 let resultArtista = await aristaDAO.insertNovoArtista(artista)
                 if (resultArtista) {
                 // Se houver gêneros para associar
-                    if (artista.genero && Array.isArray(artista.genero)) {
+                    if (artista.genero_artista && Array.isArray(artista.genero_artista)) {
                         // Obtém o ID do artista inserido
                         let artistaInserido = await aristaDAO.selectLastInsertId();
                         let idArtista = artistaInserido[0].id;
                         
                         // Para cada gênero no array, cria a relação
-                        for (let genero of artista.genero) {
+                        for (let genero of artista.genero_artista) {
                             if (genero.id && !isNaN(genero.id)) {
                                 let artistaGenero = {
                                     id_artista: idArtista,
@@ -173,7 +173,7 @@ const listarArtista = async function(){
                     let dadosGenero = await controllerArtistaGenero.buscarGeneroPorArtista(itemArtista.id)
                     
                     //Adiciona um atributo classificação no JSON de filmes e coloca os dados da classificação
-                    itemArtista.generos = dadosGenero.generos
+                    itemArtista.genero_artista = dadosGenero.genero
 
                     //Adiciona em um novo array o JSON de filmes com a sua nova estrutura de dados
                     arrayArtistas.push(itemArtista)

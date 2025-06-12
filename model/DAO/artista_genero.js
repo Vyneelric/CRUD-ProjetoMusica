@@ -130,12 +130,12 @@ const selectArtistaByIdGenero = async function(idGenero){
   }
 }
 
-//Função para retornar os generos pelo Filme
+  
 const selectGeneroByIdArtista = async function(idArtista){
  try {
       let sql = `select tbl_genero.* from tbl_artista 
                                             inner join tbl_artistas_generos
-                                              on tbl_musica.id = tbl_artistas_generos.id_artista
+                                              on tbl_artista.id = tbl_artistas_generos.id_artista
                                             inner join tbl_genero
                                               on tbl_genero.id = tbl_artistas_generos.id_genero
                   where tbl_artistas_generos.id_artista = ${idArtista}`
@@ -147,6 +147,7 @@ const selectGeneroByIdArtista = async function(idArtista){
     else 
         return false
   } catch (error) {
+      console.log('Erro DAO selectGeneroByIdArtista:', error)
       return false
   }
 }

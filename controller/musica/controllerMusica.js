@@ -168,17 +168,11 @@ const listarMusica = async function(){
                     
                 
                 for(const itemMusica of resultMusica){
-
-
-                    //Busca os dados da classificação na controller de classificacao
                     let dadosGenero = await controllerMusicaGenero.buscarGeneroPorMusica(itemMusica.id)
-                    
-                    //Adiciona um atributo classificação no JSON de filmes e coloca os dados da classificação
+        
                     itemMusica.generos = dadosGenero.genero
                     
-                    //Adiciona em um novo array o JSON de filmes com a sua nova estrutura de dados
                     arrayMusicas.push(itemMusica)
- 
                 }
                 
                 dadosMusicas.musicas = arrayMusicas

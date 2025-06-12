@@ -26,6 +26,8 @@ const controllerAssinatura = require('./controller/assinatura/controllerAssinatu
 const controllerUsuario = require('./controller/usuario/controllerUsuario.js')
 const controllerAlbum = require('./controller/album/controllerAlbum.js')
 const controllerPlaylist = require('./controller/playlist/controllerPlaylist.js')
+const controllerTipoEmail = require('./controller/tipo_email/controllerTipoEmail.js')
+const controllerCurtidas = require('./controller/musica/controllerCurtidas.js')
 
 //Configurações de permissões do CORS para a API
 app.use((request, response, next)=>{
@@ -524,6 +526,113 @@ app.put('/v1/controle-musicas/playlist/:id', cors(), bodyparserJSON, async funct
 
     //CHama a função
     let result = await controllerPlaylist.atualizarPlaylist(id, dadosBody, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+
+//END-POINT TIPO_EMAIL
+ 
+app.post('/v1/controle-musicas/tipo_email', cors(), bodyparserJSON, async function(request, response){
+
+    let contentType = request.headers['content-type'] 
+
+    let dadosBody = request.body
+
+    let result = await controllerTipoEmail.inserirTipoEmail(dadosBody, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+app.get('/v1/controle-musicas/tipo_email', cors(), async function(request, response){
+
+    let result = await controllerTipoEmail.listarTipoEmail()
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+app.get('/v1/controle-musicas/tipo_email/:id', cors(), async function(request, response){
+    const id = request.params.id
+
+    let result = await controllerTipoEmail.buscarTipoEmail(id)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+app.delete('/v1/controle-musicas/tipo_email/:id', cors(), async function(request, response){
+    const id = request.params.id
+
+    let result = await controllerTipoEmail.excluirTipoEmail(id)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+app.put('/v1/controle-musicas/tipo_email/:id', cors(), bodyparserJSON, async function(request, response){
+    let contentType = request.headers['content-type']
+    
+    let idTipoEmail = request.params.id
+
+    let dadosBody = request.body
+
+    let result = await controllerTipoEmail.atualizarTipoEmail(idTipoEmail, dadosBody, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//END-POINT CURTIDAS
+ 
+app.post('/v1/controle-musicas/curtidas', cors(), bodyparserJSON, async function(request, response){
+
+    let contentType = request.headers['content-type'] 
+
+    let dadosBody = request.body
+
+    let result = await controllerCurtidas.inserirCurtidas(dadosBody, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+app.get('/v1/controle-musicas/curtidas', cors(), async function(request, response){
+
+    let result = await controllerCurtidas.listarCurtidas()
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+app.get('/v1/controle-musicas/curtidas/:id', cors(), async function(request, response){
+    const id = request.params.id
+
+    let result = await controllerCurtidas.buscarCurtidas(id)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+app.delete('/v1/controle-musicas/curtidas/:id', cors(), async function(request, response){
+    const id = request.params.id
+
+    let result = await controllerCurtidas.excluirCurtidas(id)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+app.put('/v1/controle-musicas/curtidas/:id', cors(), bodyparserJSON, async function(request, response){
+    let contentType = request.headers['content-type']
+    
+    let idCurtidas = request.params.id
+
+    let dadosBody = request.body
+
+    let result = await controllerCurtidas.atualizarCurtidas(idCurtidas, dadosBody, contentType)
 
     response.status(result.status_code)
     response.json(result)

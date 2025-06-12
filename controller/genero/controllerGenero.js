@@ -131,7 +131,7 @@ const listarGeneros = async function(){
                 dadosGeneros.status = true,
                 dadosGeneros.status_code = 200,
                 dadosGeneros.items = resultGenero.length,
-                dadosGeneros.generos = resultGenero
+                dadosGeneros.genero = resultGenero
 
                 return dadosGeneros
             }else{
@@ -163,7 +163,7 @@ const buscarGenero = async function (id_genero){
                 //Cria um JSON para colocar o array de músicas
                 dadosGeneros.status = true,
                 dadosGeneros.status_code = 200,
-                dadosGeneros.generos = resultGenero
+                dadosGeneros.genero = resultGenero
 
                 return dadosGeneros
             }else{

@@ -105,8 +105,6 @@ const selectAllArtistas = async function(){
         } catch(error){
             return false //Bug de programação.
         }
-
-
 }
 
 //Função para buscar uma música pelo ID
@@ -128,12 +126,11 @@ const selectByIDArtista = async function(id){
         } catch(error){
             return false //Bug de programação.
         }
-
 }
 
 const selectLastInsertId = async function() {
     try {
-        let sql = 'select id from tbl_musica order by id desc limit 1';
+        let sql = 'select id from tbl_artista order by id desc limit 1';
         
         let result = await prisma.$queryRawUnsafe(sql);
         if (result)
